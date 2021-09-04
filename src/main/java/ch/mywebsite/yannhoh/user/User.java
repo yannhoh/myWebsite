@@ -1,7 +1,5 @@
 package ch.mywebsite.yannhoh.user;
 
-import org.springframework.data.annotation.Id;
-
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -13,7 +11,8 @@ enum Role {
 @Entity
 @Table(name = "accounts")
 public class User {
-    @javax.persistence.Id
+
+    @org.springframework.data.annotation.Id
     private Long id;
     private String username;
     private String password;
@@ -22,7 +21,6 @@ public class User {
     private Date createdOn;
 
     protected User() {}
-
     //Every new Users' role is set as "USER"
     public User(String username, String password, String email) {
         role = Role.USER;
@@ -32,21 +30,15 @@ public class User {
         this.createdOn = Date.valueOf(LocalDate.now());
     }
 
-    public Date getCreatedOn() {
-        return createdOn;
-    }
+    public Date getCreatedOn() { return createdOn; }
 
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
+    public void setCreatedOn(Date createdOn) { this.createdOn = createdOn; }
 
     public void setUsername(String username) {
         this.username = username;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public void setPassword(String password) { this.password = password; }
 
     public void setEmail(String email) {
         this.email = email;
@@ -60,22 +52,20 @@ public class User {
         return username;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() { return password; }
 
     public String getEmail() {
         return email;
     }
 
-    public Role getRole() {
-        return role;
-    }
+    public Role getRole() { return role; }
 
     public void setId(Long id) {
-        this.id = id;
+        //this.id = id;
     }
 
+    @Id
+    @GeneratedValue
     public Long getId() {
         return id;
     }
