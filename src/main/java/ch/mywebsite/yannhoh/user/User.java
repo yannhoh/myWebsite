@@ -12,7 +12,7 @@ enum Role {
 @Table(name = "accounts")
 public class User {
 
-    @org.springframework.data.annotation.Id
+    @Id
     private Long id;
     private String username;
     private String password;
@@ -61,7 +61,7 @@ public class User {
     public Role getRole() { return role; }
 
     public void setId(Long id) {
-        //this.id = id;
+        this.id = id;
     }
 
     @Id
