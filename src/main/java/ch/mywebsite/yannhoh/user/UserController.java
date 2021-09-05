@@ -4,7 +4,6 @@ import ch.mywebsite.yannhoh.exceptions.EmailAlreadyInUseException;
 import ch.mywebsite.yannhoh.exceptions.UserDoesNotExistException;
 import ch.mywebsite.yannhoh.exceptions.UsernameAlreadyInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,14 +16,14 @@ public class UserController {
 
     //userService will be instantiated automatically with @Autowired notation
     @Autowired
-    public UserController (UserService userService){
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
-}
+    }
 
     @PostMapping
     public void addUser(@RequestBody User user) throws EmailAlreadyInUseException, UsernameAlreadyInUseException {
