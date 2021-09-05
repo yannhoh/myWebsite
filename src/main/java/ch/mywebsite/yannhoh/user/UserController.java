@@ -1,5 +1,7 @@
 package ch.mywebsite.yannhoh.user;
 
+import ch.mywebsite.yannhoh.exceptions.EmailAlreadyInUseException;
+import ch.mywebsite.yannhoh.exceptions.UsernameAlreadyInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,7 @@ public class UserController {
 }
 
     @PostMapping
-    public void addUser(@RequestBody User user){
+    public void addUser(@RequestBody User user) throws EmailAlreadyInUseException, UsernameAlreadyInUseException {
         userService.addUser(user);
     }
 }
