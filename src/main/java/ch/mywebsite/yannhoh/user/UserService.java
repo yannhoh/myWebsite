@@ -1,5 +1,6 @@
 package ch.mywebsite.yannhoh.user;
 
+import ch.mywebsite.yannhoh.Role;
 import ch.mywebsite.yannhoh.exceptions.EmailAlreadyInUseException;
 import ch.mywebsite.yannhoh.exceptions.UserDoesNotExistException;
 import ch.mywebsite.yannhoh.exceptions.UsernameAlreadyInUseException;

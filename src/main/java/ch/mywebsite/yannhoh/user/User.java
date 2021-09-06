@@ -1,12 +1,11 @@
 package ch.mywebsite.yannhoh.user;
 
+import ch.mywebsite.yannhoh.Role;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDate;
 
-enum Role {
-    ADMIN, USER
-}
 
 @Entity
 @Table(name = "accounts")
