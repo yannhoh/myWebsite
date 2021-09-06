@@ -3,7 +3,6 @@ package ch.mywebsite.yannhoh.api;
 import ch.mywebsite.yannhoh.Role;
 import ch.mywebsite.yannhoh.TestHelper;
 import ch.mywebsite.yannhoh.user.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserAPITest {
 
     private String urlUser;
-    private ObjectMapper mapper;
     private User firstUser, secondUser, thirdUser, usernametakenUser, emailtakenUser;
     private TestHelper testHelper;
 
@@ -37,7 +35,6 @@ class UserAPITest {
 
     @BeforeEach
     void setUp() {
-        mapper = new ObjectMapper();
         urlUser = "http://localhost:" + port + "/user";
         firstUser = new User("richi", "123**ho?", "hee@ho.com");
         usernametakenUser = new User("richi", "123**ho?", "haa@ho.com");
@@ -45,9 +42,8 @@ class UserAPITest {
         secondUser = new User("richardine", "456**ha?", "haa@ho.com");
         thirdUser = new User("richardinho", "789**hi?", "hii@ho.com");
         testHelper = new TestHelper();
-        testHelper.deleteUser(1L, urlUser);
-        testHelper.deleteUser(2L, urlUser);
-        testHelper.deleteUser(3L, urlUser);
+        Long[] everyId = new Long[]{1L, 2L, 3L, 4L, 5L, 6L, 7L};
+        testHelper.deleteTheseUsers(everyId, urlUser);
     }
 
     @Test

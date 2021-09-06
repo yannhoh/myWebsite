@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import java.util.List;
 import java.util.Optional;
 
-//TODO API-Documentation with Open-API und dem yaml-file
-
 @Service
 public class UserService {
 
@@ -54,7 +52,6 @@ public class UserService {
         } else {
             throw new UserDoesNotExistException();
         }
-
     }
 
     @PutMapping

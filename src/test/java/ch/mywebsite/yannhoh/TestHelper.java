@@ -44,9 +44,9 @@ public class TestHelper {
                     String.class);
         }
 
-    public void deleteTheseUsers(List<Long> idList, String url) {
+    public void deleteTheseUsers(Long[] idArr, String url) {
         User user = new User("", "", "");
-        for (Long id : idList) {
+        for (Long id : idArr) {
             user.setId(id);
             restTemplate.exchange(url, HttpMethod.DELETE,
                     new HttpEntity<User>(user),
