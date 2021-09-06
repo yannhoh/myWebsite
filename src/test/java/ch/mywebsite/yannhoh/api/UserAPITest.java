@@ -1,11 +1,11 @@
 package ch.mywebsite.yannhoh.api;
 
 import ch.mywebsite.yannhoh.Role;
+import ch.mywebsite.yannhoh.TestHelper;
 import ch.mywebsite.yannhoh.user.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -16,10 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,6 +27,7 @@ class UserAPITest {
     private String urlUser;
     private ObjectMapper mapper;
     private User firstUser, secondUser, thirdUser, usernametakenUser, emailtakenUser;
+    private TestHelper testHelper;
 
     @LocalServerPort
     private int port = 8080;
@@ -45,6 +44,10 @@ class UserAPITest {
         emailtakenUser = new User("richardine", "123**ho?", "hee@ho.com");
         secondUser = new User("richardine", "456**ha?", "haa@ho.com");
         thirdUser = new User("richardinho", "789**hi?", "hii@ho.com");
+        testHelper = new TestHelper();
+        testHelper.deleteUser(1L, urlUser);
+        testHelper.deleteUser(2L, urlUser);
+        testHelper.deleteUser(3L, urlUser);
     }
 
     @Test
@@ -67,15 +70,10 @@ class UserAPITest {
         response = this.restTemplate.postForEntity(urlUser, secondUser, Object.class);
         assertThat(response.getStatusCode()).isSameAs(HttpStatus.OK);
 
-        //Get all saved users
-        ResponseEntity<Object[]> responseGetAllUsers = this.restTemplate.getForEntity(urlUser,
-                Object[].class);
-        List<User> userList = Arrays.stream(Objects.requireNonNull(responseGetAllUsers.getBody()))
-                .map(obj -> mapper.convertValue(obj, User.class))
-                .collect(Collectors.toList());
-
-        assertThat(responseGetAllUsers.getStatusCode()).isSameAs(HttpStatus.OK);
+        //Check all saved users
+        List<User> userList = testHelper.getAllUserList(urlUser);
         assertThat(userList.size()).isEqualTo(2);
+
         assertThat(userList.get(0).getId()).isEqualTo(1L);
         assertThat(userList.get(0).getUsername()).isEqualTo("richi");
         assertThat(userList.get(0).getEmail()).isEqualTo("hee@ho.com");
@@ -96,21 +94,18 @@ class UserAPITest {
 
         //Create a user with an ID outside the DB because DELETE needs only the ID
         User userWithID = firstUser;
-        userWithID.setId(1L);
 
-        //Delete existing ser
+        Long id = testHelper.getAllUserList(urlUser).get(0).getId();
+        userWithID.setId(id);
+
+        //Delete existing user
         ResponseEntity<String> exchange = restTemplate.exchange(urlUser, HttpMethod.DELETE,
                 new HttpEntity<User>(userWithID),
                 String.class);
 
         assertThat(exchange.getStatusCode()).isSameAs(HttpStatus.OK);
 
-        ResponseEntity<Object[]> responseGetAllUsers = this.restTemplate.getForEntity(urlUser,
-                Object[].class);
-        List<User> userList = Arrays.stream(Objects.requireNonNull(responseGetAllUsers.getBody()))
-                .map(obj -> mapper.convertValue(obj, User.class))
-                .collect(Collectors.toList());
-
+        List<User> userList = testHelper.getAllUserList(urlUser);
         assertThat(userList.size()).isEqualTo(1);
 
         //Try to delete non-existing user
@@ -118,6 +113,48 @@ class UserAPITest {
                 new HttpEntity<User>(userWithID),
                 String.class);
         assertThat(exchange.getStatusCode()).isSameAs(HttpStatus.NOT_FOUND);
+        assertThat(Objects.requireNonNull(exchange.getBody())).contains("\"message\":\"A user with this id does not exist\"");
 
+    }
+
+    @Test
+    public void updateUserTest() {
+        this.restTemplate.postForEntity(urlUser, firstUser, Object.class);
+
+        //Create a user with an ID outside the DB because PUT goes by the ID
+        User updatedUser = thirdUser;
+        Long id = testHelper.getAllUserList(urlUser).get(0).getId();
+        updatedUser.setId(id);
+        updatedUser.setRole(Role.ADMIN);
+
+        //Update existing user
+        ResponseEntity<String> exchange = restTemplate.exchange(urlUser, HttpMethod.PUT,
+                new HttpEntity<User>(updatedUser),
+                String.class);
+        assertThat(exchange.getStatusCode()).isSameAs(HttpStatus.OK);
+
+        List<User> userList = testHelper.getAllUserList(urlUser);
+        assertThat(userList.size()).isEqualTo(1);
+        assertThat(userList.get(0).getId()).isEqualTo(id);
+        assertThat(userList.get(0).getUsername()).isEqualTo("richardinho");
+        assertThat(userList.get(0).getEmail()).isEqualTo("hii@ho.com");
+        assertThat(userList.get(0).getPassword()).isEqualTo("789**hi?");
+        assertThat(userList.get(0).getRole()).isSameAs(Role.ADMIN);
+
+        //Try to update a user with the same data as in DB already
+        exchange = restTemplate.exchange(urlUser, HttpMethod.PUT,
+                new HttpEntity<User>(updatedUser),
+                String.class);
+        assertThat(exchange.getStatusCode()).isSameAs(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThat(Objects.requireNonNull(exchange.getBody())).contains("\"message\":\"Nothing to update\"");
+
+        //Update user which is not existing
+        updatedUser.setId(1_000_000_000L);
+        ResponseEntity<String> exchange2 = restTemplate.exchange(urlUser, HttpMethod.PUT,
+                new HttpEntity<User>(updatedUser),
+                String.class);
+
+        assertThat(exchange2.getStatusCode()).isSameAs(HttpStatus.NOT_FOUND);
+        assertThat(Objects.requireNonNull(exchange2.getBody())).contains("\"message\":\"A user with this id does not exist\"");
     }
 }
