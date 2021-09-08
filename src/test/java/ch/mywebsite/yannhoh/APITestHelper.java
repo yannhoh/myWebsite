@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TestHelper {
+public class APITestHelper {
     TestRestTemplate restTemplate;
 
-    public TestHelper(){
+    public APITestHelper() {
         restTemplate = new TestRestTemplate();
     }
 
@@ -40,7 +40,7 @@ public class TestHelper {
         User user = new User("", "", "");
             user.setId(id);
             restTemplate.exchange(url, HttpMethod.DELETE,
-                    new HttpEntity<User>(user),
+                    new HttpEntity<>(user),
                     String.class);
         }
 
@@ -49,7 +49,7 @@ public class TestHelper {
         for (Long id : idArr) {
             user.setId(id);
             restTemplate.exchange(url, HttpMethod.DELETE,
-                    new HttpEntity<User>(user),
+                    new HttpEntity<>(user),
                     String.class);
         }
     }

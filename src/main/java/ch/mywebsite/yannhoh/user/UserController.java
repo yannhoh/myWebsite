@@ -14,7 +14,6 @@ public class UserController {
 
     private final UserService userService;
 
-    //userService will be instantiated automatically with @Autowired notation
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
