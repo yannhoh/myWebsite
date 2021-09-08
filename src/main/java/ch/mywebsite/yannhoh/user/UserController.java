@@ -4,12 +4,14 @@ import ch.mywebsite.yannhoh.exceptions.EmailAlreadyInUseException;
 import ch.mywebsite.yannhoh.exceptions.UserDoesNotExistException;
 import ch.mywebsite.yannhoh.exceptions.UsernameAlreadyInUseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping(path = "user")
+@Controller
+@RequestMapping(path = "/user")
 public class UserController {
 
     private final UserService userService;
@@ -20,8 +22,12 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public String getAllUsers(Model model) {
+        List<User> list = userService.getAllUsers();
+        model.addAttribute("message", "messageeeeeeeeeee");
+        System.out.println("::::::::::::::::::::::::::::::");
+        model.addAttribute("usersList", list);
+        return "allUsersPage";
     }
 
     @PostMapping
