@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping(path = "/user")
+@RequestMapping(path = "user")
 public class UserController {
 
     private final UserService userService;
@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @GetMapping
-    public String getAllUsers(Model model) {
+    public String getAllUsers(Model model) { //Works only with @Controller Annotation
         List<User> list = userService.getAllUsers();
         model.addAttribute("message", "messageeeeeeeeeee");
         System.out.println("::::::::::::::::::::::::::::::");
